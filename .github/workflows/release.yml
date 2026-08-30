@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: Release
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        id: build
+        uses: ./.github/actions/build
+
+      - name: Release
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          ASSET: ${{ steps.build.outputs.zip_path }}
+        run: |
+          gh release create $env:TAG `
+            --title "$env:TAG" `
+            --notes "Automated release for $env:TAG from commit $env:GITHUB_SHA" `
+            $env:ASSET

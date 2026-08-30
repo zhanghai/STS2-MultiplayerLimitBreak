@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        id: build
+        uses: ./.github/actions/build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: STS2-MultiplayerLimitBreak-${{ github.sha }}
+          path: ${{ steps.build.outputs.zip_path }}
+          retention-days: 10
