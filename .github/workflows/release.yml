@@ -24,10 +24,10 @@ jobs:
         shell: pwsh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          ASSET: ${{ steps.build.outputs.zip_path }}
         run: |
-          $tag = "${{ github.ref_name }}"
-          $asset = "${{ steps.build.outputs.zip_path }}"
-          gh release create $tag `
-            --title "$tag" `
-            --notes "Automated release for $tag from commit $env:GITHUB_SHA" `
-            $asset
+          gh release create $env:TAG `
+            --title "$env:TAG" `
+            --notes "Automated release for $env:TAG from commit $env:GITHUB_SHA" `
+            $env:ASSET
